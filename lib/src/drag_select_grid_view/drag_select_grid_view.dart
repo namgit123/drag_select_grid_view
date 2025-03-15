@@ -84,6 +84,7 @@ class DragSelectGridView extends StatefulWidget {
     this.padding,
     required this.gridDelegate,
     required this.itemBuilder,
+    required this.afterHandle,
     this.itemCount,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
@@ -146,11 +147,7 @@ class DragSelectGridView extends StatefulWidget {
   /// Refer to [GridView.gridDelegate].
   final SliverGridDelegate gridDelegate;
 
-  /// Called whenever a child needs to be built.
-  ///
-  /// The client should use this to build the children dynamically, based on
-  /// the index and whether it is selected or not.
-  ///
+  final Function() afterHandle;
   /// Also refer to [SliverChildBuilderDelegate.builder].
   final SelectableWidgetBuilder itemBuilder;
 
@@ -247,6 +244,7 @@ class DragSelectGridViewState extends State<DragSelectGridView>
     super.build(context);
     return GestureDetector(
       onTapUp: _handleTapUp,
+      onTap: widget.afterHandle,
       onLongPressStart: _handleLongPressStart,
       onLongPressMoveUpdate: _handleLongPressMoveUpdate,
       onLongPressEnd: _handleLongPressEnd,
@@ -312,6 +310,7 @@ class DragSelectGridViewState extends State<DragSelectGridView>
         _updateLocalHistory();
       }
     }
+    widget.afterHandle();
   }
 
   void _handleLongPressStart(LongPressStartDetails details) {
@@ -355,6 +354,7 @@ class DragSelectGridViewState extends State<DragSelectGridView>
   void _handleLongPressEnd(LongPressEndDetails details) {
     setState(_selectionManager.endDrag);
     stopScrolling();
+    widget.afterHandle();
   }
 
   void _updateLocalHistory() {
